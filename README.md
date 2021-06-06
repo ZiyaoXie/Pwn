@@ -16,6 +16,10 @@ r.send(asm(shellcraft.sh()))
 r.interactive()
 ```
 
+## Template
+
+This is a [template](template/README.md) for write-ups.
+
 ## pwnable.kr
 
 Some [write-ups](pwnable.kr/README.md) for [pwnable.kr](http://pwnable.kr/index.php).
