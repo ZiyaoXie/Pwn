@@ -1,5 +1,11 @@
 # CTF Pwn
 
+## Warm up
+
+### The Attack Lab
+
+This assignment involves generating a total of five attacks on two programs having different security vul- nerabilities, which helps you to understand buffer overflow bugs. More details can be seen in [README](labs/attack_lab/README.md).
+
 ## Tools
 
 ### Pwntools

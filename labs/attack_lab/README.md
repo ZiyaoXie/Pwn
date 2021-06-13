@@ -116,3 +116,74 @@ Your task is to get `CTARGET` to execute the code for `touch3` rather than retur
 
 [Writeups](part1/README.md) for Part I.
 
+## Part II: Return-Oriented Programming
+
+Performing code-injection attacks on program `RTARGET` is much more difficult than it is for `CTARGET`, because it uses two techniques to thwart such attacks:
+
+- It uses randomization so that the stack positions differ from one run to another. This makes it impos- sible to determine where your injected code will be located.
+- It marks the section of memory holding the stack as nonexecutable, so even if you could set the program counter to the start of your injected code, the program would fail with a segmentation fault.
+
+Fortunately, clever people have devised strategies for getting useful things done in a program by executing existing code, rather than injecting new code. The most general form of this is referred to as *return-oriented programming* (ROP) . The strategy with ROP is to identify byte sequences within an existing program that consist of one or more instructions followed by the instruction `ret`. Such a segment is referred to as a *gadget*.
+
+![gadgets](img/gadgets.png)
+
+This illustrates how the stack can be set up to execute a sequence of n gadgets. In this figure, the stack contains a sequence of gadget addresses. Each gadget consists of a series of instruction bytes, with the final one being `0xc3`, encoding the `ret` instruction. When the program executes a ret instruction starting with this configuration, it will initiate a chain of gadget executions, with the `ret` instruction at the end of each gadget causing the program to jump to the beginning of the next.
+
+For example, one version of `rtarget` contains code generated for the following `C` function:
+
+```C
+void setval_210(unsigned *p)
+{
+    *p = 3347663060U;
+}
+```
+
+The chances of this function being useful for attacking a system seem pretty slim. But, the disassembled machine code for this function shows an interesting byte sequence:
+
+```Assembly
+0000000000400f15 <setval_210>:
+  400f15:       c7 07 d4 48 89 c7       movl   $0xc78948d4,(%rdi)
+  400f1b:       c3                      retq
+```
+
+The byte sequence `48 89 c7` encodes the instruction `movq %rax, %rdi`. This sequence is followed by byte value `c3`, which encodes the `ret` instruction. The function starts at address `0x400f15`, and the sequence starts on the fourth byte of the function. Thus, this code contains a gadget, having a starting address of `0x400f18`, that will copy the 64-bit value in register `%rax` to register `%rdi`.
+
+```Assembly
+400f18:       48 89 c7                movq   %rax, %rdi
+400f1b:       c3                      retq
+```
+
+Your code for `RTARGET` contains a number of functions similar to the `setval_210` function shown above in a region we refer to as the *gadget farm*. Your job will be to identify useful gadgets in the gadget farm and use these to perform attacks similar to those you did in Level 2 and 3 above.
+
+Important: The gadget farm is demarcated by functions `start_farm` and `end_farm` in your copy of `rtarget`. Do not attempt to construct gadgets from other portions of the program code.
+
+### Level 2
+
+You will repeat the attack of Level 2 above, but do so on program `RTARGET` using gadgets from your gadget farm. You can construct your solution using gadgets consisting of the following instruction types, and using only the first eight x86-64 registers (`%rax–%rdi`).
+
+- `movq`, `popq`, `ret`: The codes for these are shown in below.
+- `nop`: This instruction (pronounced “no op,” which is short for “no operation”) is encoded by the single byte `0x90`. Its only effect is to cause the program counter to be incremented by 1.
+
+![Encodings of movq instructions](img/Encodings_of_movq_instructions.png)
+
+![Encodings of popq instructions](img/Encodings_of_popq_instructions.png)
+
+![Encodings of movl instructions](img/Encodings_of_movl_instructions.png)
+
+![Encodings of 2-byte functional nop instructions](img/Encodings_of_2-byte_functional_nop_instructions.png)
+
+### Level 3
+
+Before you take on this, pause to consider what you have accomplished so far. In Part I, you caused a program to execute machine code of your own design. If `CTARGET` had been a network server, you could have injected your own code into a distant machine. In Part II, you circumvented two of the main devices modern systems use to thwart buffer overflow attacks. Although you did not inject your own code, you were able inject a type of program that operates by stitching together sequences of existing code.
+
+This requires you to do an ROP attack on `RTARGET` to invoke function `touch3` with a pointer to a string representation of your `cookie`. That may not seem significantly more difficult than using an ROP attack to invoke `touch2`, except that we have made it so.
+
+To solve this, you can use gadgets in the region of the code in rtarget demarcated by functions `start_farm` and `end_farm`. In addition to the gadgets used in Leve 1, this expanded farm includes the encodings of different `movl` instructions. The byte sequences in this part of the farm also contain 2-byte instructions that serve as *functional nops*, i.e., they do not change any register or memory values. These include instructions, such as `andb %al,%al`, that operate on the low-order bytes of some of the registers but do not change their values.
+
+Some Advice: The official solution requires eight gadgets (not all of which are unique).
+
+Good luck and have fun!
+
+### Writeups 
+
+[Writeups](part2/README.md) for Part II.
