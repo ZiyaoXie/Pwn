@@ -12,7 +12,7 @@ This is reversing task. all you need is binary
 
 ## Analysis
 
-Firstly, Confirm the file's type. We could use `file` like this:
+Firstly, confirm the file's type. We could use `file` like this:
 
 ```shell
 $ file flag 
@@ -47,7 +47,7 @@ nIV,Uh
 ......
 ```
 
-there are too many content! So we add a parameter to filter the length of the string:
+There are too much content! So we add a parameter to filter the length of the string:
 
 ```shell
 velscode@ubuntu:~/code$ strings -20 flag
@@ -110,6 +110,41 @@ unexpected reloc type in static binary
 
 Get the flag :)
 
+Another way to get the flag is that we can have a try to print out whatever `(char*)flag` points to with GDB.
+
+```Shell
+# file flag
+flag: ELF 64-bit LSB executable, x86-64, version 1 (GNU/Linux), statically linked, for GNU/Linux 2.6.24, BuildID[sha1]=96ec4cc272aeb383bd9ed26c0d4ac0eb5db41b16, not stripped
+# gdb flag
+GNU gdb (Ubuntu 9.2-0ubuntu1~20.04) 9.2
+...
+(No debugging symbols found in flag)
+(gdb) disas main
+Dump of assembler code for function main:
+   0x0000000000401164 <+0>:	push   %rbp
+   0x0000000000401165 <+1>:	mov    %rsp,%rbp
+   0x0000000000401168 <+4>:	sub    $0x10,%rsp
+   0x000000000040116c <+8>:	mov    $0x496658,%edi
+   0x0000000000401171 <+13>:	callq  0x402080 <puts>
+   0x0000000000401176 <+18>:	mov    $0x64,%edi
+   0x000000000040117b <+23>:	callq  0x4099d0 <malloc>
+   0x0000000000401180 <+28>:	mov    %rax,-0x8(%rbp)
+   0x0000000000401184 <+32>:	mov    0x2c0ee5(%rip),%rdx        # 0x6c2070 <flag>
+   0x000000000040118b <+39>:	mov    -0x8(%rbp),%rax
+   0x000000000040118f <+43>:	mov    %rdx,%rsi
+   0x0000000000401192 <+46>:	mov    %rax,%rdi
+   0x0000000000401195 <+49>:	callq  0x400320
+   0x000000000040119a <+54>:	mov    $0x0,%eax
+   0x000000000040119f <+59>:	leaveq
+   0x00000000004011a0 <+60>:	retq
+End of assembler dump.
+(gdb) x /s *0x6c2070
+0x496628:	"UPX...? sounds like a delivery service :)"
+(gdb)
+```
+
 ## Point
 
-UPX is a free, portable, extendable, high-performance executable packer for several executable formats.
+- `Strings` find the printable strings in a object, or other binary, file. More details in `man strings`.
+
+- `UPX` is a free, portable, extendable, high-performance executable packer for several executable formats.
