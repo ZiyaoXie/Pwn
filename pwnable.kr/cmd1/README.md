@@ -71,7 +71,11 @@ But there are two problems:
 
 The complete command is as follows:
 
-`./cmd "/bin/cat \"fla\"g`
+`./cmd1 "/bin/cat \"fla\"g`
+
+> Tips: In addition to splicing commands, using wildcards is also an available method.
+>
+> e.g. `./cmd1 "/bin/cat fla*"`
 
 ## Solution
 

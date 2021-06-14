@@ -1,6 +1,18 @@
 # CTF Pwn
 
+## Warm up
+
+### The Attack Lab
+
+This assignment involves generating a total of five attacks on two programs having different security vul- nerabilities, which helps you to understand buffer overflow bugs. More details can be seen in [README](labs/attack_lab/README.md).
+
 ## Tools
+
+### Pwndocker
+
+A docker environment for pwn in ctf based on phusion/baseimage:master-amd64, which is a modified ubuntu 20.04 baseimage for docker. More details in [Pwndocker](https://github.com/skysider/pwndocker).
+
+And this project will be based on a personal forked [version](https://github.com/ZiyaoXie/pwndocker.git).
 
 ### Pwntools
 
