@@ -10,6 +10,7 @@ For more details, please see [pwnable.kr](http://pwnable.kr/play.php).
 - [flag](flag/README.md)
 - [random](random/README.md)
 - [input](input/README.md)
+- [mistake](mistake/README.md)
 - [cmd1](cmd1/README.md)
 
 ## Rookiss
