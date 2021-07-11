@@ -8,6 +8,7 @@ For more details, please see [pwnable.kr](http://pwnable.kr/play.php).
 - [collision](collision/README.md)
 - [bof](bof/README.md)
 - [flag](flag/README.md)
+- [passcode](passcode/README.md)
 - [random](random/README.md)
 - [input](input/README.md)
 - [mistake](mistake/README.md)
